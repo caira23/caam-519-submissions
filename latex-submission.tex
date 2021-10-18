@@ -1,0 +1,166 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{listings}
+
+
+\author{\texttt{ca36}}
+\title{CAAM 519, Homework 2 \LaTeX Submission}
+\date{Sept. 30, 2021}
+\geometry{margin=1in}
+
+\begin{document}
+
+\maketitle
+
+\section{Communicating with remote machines via ssh}
+
+\begin{verbatim}
+1. Here is the ssh command I use to log into the clear machine:
+sshca36@ssh.clear.rice.edu
+
+2. Here is the message the clear machine provided upon me logging in: 
+The Rice University Network
+ ===========================
+ Unauthorized use is prohibited.
+
+ This computer system is for authorized users only.  Individuals using this
+ system without authority or in excess of their authority are subject to
+ having all their activities on this system monitored and recorded or
+ examined by any authorized person, including law enforcement, as system
+ personnel deem appropriate.  In the course of monitoring individuals
+ improperly using the system or in the course of system maintenance, the
+ activities of authorized users may also be monitored and recorded.  Any
+ material so recorded may be disclosed as appropriate.  Anyone using this
+ system consents to these terms.
+
+ Problems and/or questions should be submitted via the problem tracking
+ system form: http://helpdesk.rice.edu
+
+CURRENT USAGE AND LOAD ON THE COMPUTE NODES:
+  Mon Oct 18 01:20:01 CDT 2021
+
+ System                         # Users         Load ( 5, 10, 15 minute)
+   agate.clear.rice.edu             4             2.16, 2.07, 2.10
+   amber.clear.rice.edu             2             0.02, 0.04, 0.05
+   cobalt.clear.rice.edu            0             0.00, 0.04, 0.05
+   jade.clear.rice.edu              3             0.01, 0.03, 0.05
+   onyx.clear.rice.edu              1             0.23, 0.06, 0.06
+   opal.clear.rice.edu              1             0.03, 0.04, 0.05
+   pyrite.clear.rice.edu            2             0.00, 0.03, 0.05
+
+NOTE: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   Please log an RT ticket for any issues you may have.
+
+   Please log a ticket at https://help.rice.edu if you have any of the following:
+     Feel documentation is lacking.
+     Have trouble getting into the system.
+     Feel the system is missing a tool.
+
+   NOTE: svn.rice.edu is now READ ONLY in preparation for removal
+         from service on January 8th, 2022
+
+   NOTE: If you don't have a home drive when using Clear, please
+
+         create a ticket in help.rice.edu  Be sure to put
+         "need clear home directory" in the subject and one will
+
+         be setup for you.
+
+   NOTE: New tools available.  Maven 3.8.2, gcc 9.3.1, java 11, clang 11.0.1,
+         julia 1.6.1, python 3.9.1, vim 8.2 w/ python support.
+         Plus special purpose applications:
+           Circuit Design (ngspice, magic), Network Simulation (ns-3).
+         See kb.rice.edu for details.
+
+   CLEAR NEWS -- https://kb.rice.edu/internal/page.php?id=71856
+   Tips and Hints -- https://kb.rice.edu/internal/page.php?id=71857
+
+
+source /clear/apps/gurobi/gurobiEnv.csh
+more .cshrc
+
+3. Here is the output of the shell command 'echo $HOSTNAME': 
+opal.clear.rice.edu
+
+4. My shell prompt looks like "/mnt/c/Users/caira$" 
+Here is the command I use to (temporarily) 
+change my shell prompt to my username with a ">": 
+export PS1="\u >". Now my shell prompt is "caira >". 
+
+\end{verbatim}
+
+\section{A script to build a latex document while hiding auxiliary files}
+
+\lstset{language=bash, basicstyle=\large}
+\begin{lstlisting}
+
+#takes as input a project name which is "project". 
+#Then the script needs to make a hidden directory 
+#in the current directy named .build. 
+#Then it needs to compile project.tex using pdflatex so all 
+#auxiliary build files are contained in .build directory 
+#but project.pdf is contained in the original directory. 
+#Then commit this script to caam-519-submissions/homework-2
+
+instructions()
+{
+        #read project name as input
+        echo "What is the project name?"
+        read ProjectName
+        echo "The project's name is $ProjectName"
+
+        #make hidden directory named .build
+        #make directory first
+        mkdir build
+        echo "made build directory"
+
+        #rename/move the directory into hidden version
+        mv build .build
+        echo "hidden .build made"
+
+        #cd to .build directory
+        cd .build
+        echo "cd .build"
+
+        #create latex doc
+        touch $ProjectName.tex
+        echo "tex doc created"
+
+        #put stuff in it
+        echo "cat is used to fill the tex file. put the tex 
+	preamble and content. don't forget begin and end doc"
+        cat > $ProjectName.tex
+
+        #run latex to produce .dvi file as output
+        latex $ProjectName.tex
+
+        #compile project.tex
+        pdflatex $ProjectName.tex
+
+        #move pdf from .build to original directory
+        mv $ProjectName.pdf /mnt/c/Users/caira
+
+        echo "done"
+        return 0
+}
+
+#call instructions function
+instructions
+
+#One way that my code could cause a problem for someone is that
+#I denote a particular directory that only exists on this 
+#computer and I don't make it possible for someone 
+#else to offer a different original directory. 
+#The second way that my code could be confusing is 
+#that I just have someone put something into a 
+#random .tex file but I don't provide any 
+#indication of what exact lines 
+#need to be added to have a functional 
+#and correct .tex file. 
+  
+\end{lstlisting}
+
+\end{document}
